@@ -365,7 +365,6 @@
         </cfif>
         
         <!--- Recalculate nutrition score and grade --->
-        <!--- Temporarily disabled for debugging
         <cftry>
             <cfset nutritionScore = calculateNutritionScore(
                 form.calories,
@@ -380,20 +379,18 @@
         <cfcatch type="any">
             <cflog file="product_update" text="Error calculating nutrition score: #cfcatch.type# - #cfcatch.detail#">
             <cfset nutritionScore = 0>
-            <cfset nutritionGrade = "N/A">
+            <cfset nutritionGrade = "E">
         </cfcatch>
         </cftry>
-        --->
         
         <!--- Check if rating exists for this product --->
-        <!--- Temporarily disabled for debugging
         <cfquery name="checkRating" datasource="nutricheck">
             SELECT COUNT(*) as recordCount
             FROM product_ratings
             WHERE product_id = <cfqueryparam value="#form.productId#" cfsqltype="cf_sql_integer">
         </cfquery>
         
-        <cfif checkRating.recordCount[1] gt 0>
+        <cfif checkRating.recordCount gt 0>
             <!--- Update existing rating --->
             <cfquery name="updateRating" datasource="nutricheck">
                 UPDATE product_ratings 
@@ -414,7 +411,6 @@
                 )
             </cfquery>
         </cfif>
-        --->
         
         <!--- Verify the update was successful --->
         <!--- Temporarily disabled for debugging
@@ -432,9 +428,12 @@
         }>
         
         <cfcatch type="any">
+            <cflog file="product_update" text="Database error: #cfcatch.type# - #cfcatch.message# - #cfcatch.detail#">
             <cfset response = {
                 "success" = false,
-                "message" = "Error updating product: Database operation failed"
+                "message" = "Error updating product: #cfcatch.type# - #cfcatch.message#",
+                "detail" = cfcatch.detail,
+                "sql_state" = structKeyExists(cfcatch, "sql_state") ? cfcatch.sql_state : "N/A"
             }>
         </cfcatch>
     </cftry>
