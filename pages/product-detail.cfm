@@ -128,10 +128,14 @@
             "nutritionScore" = getProductForPDF.nutrition_score[1]
         }>
         
-        <cfheader name="Content-Disposition" value="attachment; filename=#pdfProduct.productName#_nutrition_report.pdf">
-        <cfheader name="Content-Type" value="application/pdf">
-        
-        <cfdocument format="PDF" pagetype="A4" orientation="portrait" marginleft="0.5" marginright="0.5" margintop="0.5" marginbottom="0.5">
+        <!--- Generate PDF using Adobe ColdFusion PDF Service --->
+        <cfhtmltopdf name="pdfData" 
+                     pagetype="A4" 
+                     orientation="portrait" 
+                     marginleft="0.5" 
+                     marginright="0.5" 
+                     margintop="0.5" 
+                     marginbottom="0.5">
             <cfoutput>
             <!DOCTYPE html>
             <html>
@@ -303,7 +307,12 @@
             </body>
             </html>
             </cfoutput>
-        </cfdocument>
+        </cfhtmltopdf>
+        
+        <!--- Send PDF to browser --->
+        <cfheader name="Content-Disposition" value="attachment; filename=#pdfProduct.productName#_nutrition_report.pdf">
+        <cfheader name="Content-Type" value="application/pdf">
+        <cfcontent variable="#pdfData#" type="application/pdf">
         <cfabort>
     <cfelse>
         <cfheader name="Content-Type" value="application/json">
