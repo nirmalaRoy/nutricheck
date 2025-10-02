@@ -1,0 +1,190 @@
+╔═══════════════════════════════════════════════════════════════════════╗
+║                    NutriCheck - Quick Start Guide                       ║
+║              Nutrition Product Rating & Recommendation System         ║
+╚═══════════════════════════════════════════════════════════════════════╝
+
+📋 PREREQUISITES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ Adobe ColdFusion 2025 running on port 8501
+✓ MySQL Server installed and running
+✓ Web browser
+
+🚀 SETUP IN 3 STEPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 1: Create Database
+────────────────────────
+$ mysql -u root -p < database_schema.sql
+
+This creates:
+  • nutricheck database
+  • 5 tables (users, products, categories, nutrition_data, product_ratings)
+  • Sample data (1 admin, 5 categories, 5 products)
+
+STEP 2: Configure ColdFusion Datasource
+────────────────────────────────────────
+1. Open: http://localhost:8501/CFIDE/administrator/
+2. Go to: Data & Services > Datasources
+3. Add datasource:
+   Name: nutricheck
+   Database: nutricheck
+   Server: localhost
+   Port: 3306
+   Username: root
+   Password: [your MySQL password]
+4. Click Submit and verify connection
+
+STEP 3: Deploy Application
+───────────────────────────
+Copy nutricheck folder to ColdFusion webroot
+(Usually: /opt/coldfusion/cfusion/wwwroot/ or similar)
+
+🌐 ACCESS APPLICATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+URL: http://localhost:8501/nutricheck/
+
+🔐 DEFAULT CREDENTIALS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Admin Account:
+  Email: admin@nutricheck.com
+  Password: admin123
+
+User Account:
+  Register via the UI
+
+✨ KEY FEATURES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FOR END USERS:
+  • Register and login
+  • Search products
+  • View nutrition grades (A-E)
+  • Get better product suggestions
+  • View best alternatives
+
+FOR ADMINS:
+  • Add new products
+  • Automatic nutrition grading
+  • Manage product catalog
+  • Delete products
+
+🎯 PRODUCT CATEGORIES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. 🍿 Popcorn
+2. 🥔 Chips
+3. 🍫 Chocolates
+4. 💪 Protein Supplements
+5. 🍪 Biscuits
+
+📊 GRADING SYSTEM
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+A (80-100) = Best    - Excellent nutrition ✅
+B (60-79)  = Better  - Good nutrition ✅
+C (40-59)  = Good    - Moderate nutrition ⚠️
+D (20-39)  = Bad     - Poor nutrition ⚠️
+E (0-19)   = Worst   - Very poor nutrition ❌
+
+🔄 SUGGESTION FLOW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+When you search for a product with grade E, D, C, or B:
+
+1. Click "Show Better Products" → See next grade level
+2. Keep clicking → Progressive improvement
+3. Click "Show Best Products" → View all Grade A products
+
+Example: E → D → C → B → A (Best!)
+
+📁 FILE STRUCTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+nutricheck/
+  ├── Application.cfc           # App configuration
+  ├── index.cfm                 # Entry point
+  ├── login.cfm                 # Login page
+  ├── register.cfm              # Registration
+  ├── dashboard.cfm             # Main dashboard
+  ├── api/
+  │   ├── auth.cfm             # Authentication API
+  │   └── products.cfm         # Products API
+  ├── admin/
+  │   ├── index.cfm            # Admin panel
+  │   └── products.cfm         # Admin API
+  ├── assets/css/style.css     # Styles
+  └── database_schema.sql       # Database setup
+
+📚 DOCUMENTATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• README_NUTRIAPP.md          - Complete documentation
+• SETUP_INSTRUCTIONS.md       - Detailed setup guide
+• DEPLOYMENT_CHECKLIST.md     - Verification checklist
+• NUTRITION_SCORING_GUIDE.md  - Algorithm explanation
+• APPLICATION_SUMMARY.md      - Project overview
+• QUICK_START.txt            - This file
+
+🧪 TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Login as admin (admin@nutricheck.com / admin123)
+2. Go to Admin Panel
+3. Add a new product
+4. Return to dashboard
+5. Search for the product
+6. Click "Show Better Products"
+7. Test the suggestion system
+
+🔧 TROUBLESHOOTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Problem: Cannot connect to database
+Solution: 
+  • Check MySQL is running
+  • Verify datasource in CF Admin
+  • Check credentials
+
+Problem: 404 Error
+Solution:
+  • Verify application path
+  • Check webroot location
+  • Restart ColdFusion
+
+Problem: Login fails
+Solution:
+  • Clear browser cache
+  • Verify admin user in database
+  • Check session management
+
+Problem: No products showing
+Solution:
+  • Verify sample data inserted
+  • Check browser console
+  • Test API endpoints
+
+🌟 NEXT STEPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Login and explore the dashboard
+2. Search for products
+3. Test the suggestion system
+4. Add new products via admin panel
+5. Create user accounts
+6. Customize the CSS if desired
+
+💡 TIPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• Use search bar to find products quickly
+• Try different product categories
+• Watch the grades change as you add products
+• Progressive suggestions guide users to better choices
+• Admin panel auto-calculates nutrition grades
+
+🎉 YOU'RE ALL SET!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Your NutriCheck is ready to use!
+
+Access: http://localhost:8501/nutricheck/
+Login: admin@nutricheck.com / admin123
+
+For detailed information, see README_NUTRIAPP.md
+
+Happy nutrition tracking! 🍎
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Version: 1.0 | Created: September 30, 2025 | Framework: ColdFusion 2025
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
