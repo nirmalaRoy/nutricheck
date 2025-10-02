@@ -840,6 +840,133 @@
             background: linear-gradient(135deg, ##c31432 0%, ##240b36 100%);
         }
         
+        /* Better and Best Products Section */
+        .better-best-section {
+            margin-top: 40px;
+        }
+        
+        .products-container {
+            margin-bottom: 30px;
+            background: ##f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            color: ##667eea;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .product-card-mini {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        
+        .product-card-mini:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-color: ##667eea;
+        }
+        
+        .product-card-mini .nutrition-grade-mini {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .product-card-mini .product-name-mini {
+            font-size: 18px;
+            font-weight: 600;
+            color: ##333;
+            margin-bottom: 8px;
+            padding-right: 50px;
+            line-height: 1.3;
+        }
+        
+        .product-card-mini .product-brand-mini {
+            color: ##666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .product-card-mini .product-price-mini {
+            color: ##667eea;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .product-card-mini .nutrition-info-mini {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: ##666;
+            margin-bottom: 15px;
+            background: ##f8f9fa;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+        
+        .product-card-mini .view-detail-btn {
+            width: 100%;
+            padding: 10px;
+            background: #667eea !important;
+            color: white !important;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+        
+        .product-card-mini .view-detail-btn:hover {
+            background: #5a67d8 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .no-products-message {
+            text-align: center;
+            color: ##666;
+            font-style: italic;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 10px;
+            border: 2px dashed ##ddd;
+        }
+        
         /* Responsive design */
         @media (max-width: 768px) {
             .product-detail-container {
@@ -889,6 +1016,19 @@
                 flex-direction: column;
                 align-items: flex-start;
                 margin-bottom: 10px;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .product-card-mini {
+                padding: 15px;
+            }
+            
+            .section-title {
+                font-size: 20px;
             }
         }
         
@@ -1039,6 +1179,25 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Better and Best Products Section -->
+            <div id="betterBestSection" class="better-best-section">
+                <!-- Better Products -->
+                <div id="betterProductsContainer" class="products-container" style="display: none;">
+                    <h3 class="section-title">🔥 Better Products in This Category</h3>
+                    <div id="betterProductsGrid" class="products-grid">
+                        <!-- Better products will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Best Products -->
+                <div id="bestProductsContainer" class="products-container" style="display: none;">
+                    <h3 class="section-title">🏆 Best Products in This Category</h3>
+                    <div id="bestProductsGrid" class="products-grid">
+                        <!-- Best products will be loaded here -->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -1081,8 +1240,10 @@
     </cfoutput>
     
     <script>
-        // Store product ID in a variable for JavaScript use
+        // Store product ID and details in variables for JavaScript use
         var currentProductId = <cfoutput>#url.id#</cfoutput>;
+        var currentProductGrade = '<cfoutput>#product.nutritionGrade#</cfoutput>';
+        var currentProductCategory = '<cfoutput>#product.categoryName#</cfoutput>';
         
         function openEmailModal() {
             document.getElementById('emailModal').style.display = 'block';
@@ -1152,6 +1313,162 @@
                 submitButton.textContent = originalText;
                 submitButton.disabled = false;
             });
+        }
+        
+        // Load better and best products when page loads
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('Loading products for grade:', currentProductGrade, 'category:', currentProductCategory);
+            loadBetterProducts();
+        });
+        
+        function loadBetterProducts() {
+            // Only show better products if current product is not grade A
+            if (currentProductGrade === 'A') {
+                // For Grade A products, don't show any sections
+                return;
+            }
+            
+            fetch(`../api/products.cfm?action=getSuggestions&productId=${currentProductId}&currentGrade=${currentProductGrade}&categoryName=${encodeURIComponent(currentProductCategory)}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Better products response:', data); // Debug log
+                    
+                    if (data.success && data.suggestions && data.suggestions.length > 0) {
+                        displayBetterProducts(data.suggestions, data.targetGrade);
+                        
+                        // If better products are Grade A (for Grade B products), don't show separate best products
+                        if (data.targetGrade === 'A') {
+                            return; // Don't load best products separately
+                        }
+                    } else {
+                        console.log('No better products found or API returned no suggestions');
+                        // Show a message that no better products are available, but still try to show best products
+                        showNoBetterProductsMessage(data.targetGrade || getTargetGrade(currentProductGrade));
+                    }
+                    
+                    // Load best products for grades C, D, E (when better products are not Grade A)
+                    loadBestProducts();
+                })
+                .catch(error => {
+                    console.error('Error loading better products:', error);
+                    // Still try to load best products if better products API fails
+                    loadBestProducts();
+                });
+        }
+        
+        function loadBestProducts() {
+            console.log('loadBestProducts called for grade:', currentProductGrade);
+            
+            // Only show best products for grades C, D, E (not for A or B)
+            if (currentProductGrade === 'A' || currentProductGrade === 'B') {
+                console.log('Skipping best products for grade:', currentProductGrade);
+                return;
+            }
+            
+            fetch(`../api/products.cfm?action=getBest&productId=${currentProductId}&categoryName=${encodeURIComponent(currentProductCategory)}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Best products response:', data); // Debug log
+                    
+                    if (data.success && data.products && data.products.length > 0) {
+                        displayBestProducts(data.products);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading best products:', error);
+                });
+        }
+        
+        function displayBetterProducts(products, targetGrade) {
+            const container = document.getElementById('betterProductsContainer');
+            const grid = document.getElementById('betterProductsGrid');
+            
+            if (products.length === 0) {
+                return;
+            }
+            
+            // Update section title with target grade
+            const title = container.querySelector('.section-title');
+            if (targetGrade === 'A') {
+                title.innerHTML = `🏆 Best Products in This Category (Grade A)`;
+            } else {
+                title.innerHTML = `🔥 Better Products in This Category (Grade ${targetGrade})`;
+            }
+            
+            grid.innerHTML = products.map(product => createProductCard(product)).join('');
+            container.style.display = 'block';
+        }
+        
+        function displayBestProducts(products) {
+            const container = document.getElementById('bestProductsContainer');
+            const grid = document.getElementById('bestProductsGrid');
+            
+            if (products.length === 0) {
+                grid.innerHTML = `
+                    <div class="no-products-message">
+                        <h4>No Grade A products available in this category</h4>
+                        <p>This category doesn't have any Grade A products yet. Consider looking at products from other categories!</p>
+                    </div>
+                `;
+            } else {
+                grid.innerHTML = products.map(product => createProductCard(product)).join('');
+            }
+            
+            container.style.display = 'block';
+        }
+        
+        function createProductCard(product) {
+            const nutritionInfo = product.nutrition ? `
+                <div class="nutrition-info-mini">
+                    <span>Cal: ${product.nutrition.calories || 'N/A'}</span>
+                    <span>Protein: ${product.nutrition.protein || 'N/A'}g</span>
+                    <span>Sugar: ${product.nutrition.sugar || 'N/A'}g</span>
+                </div>
+            ` : '';
+            
+            return `
+                <div class="product-card-mini" onclick="navigateToProduct(${product.productId})">
+                    <div class="nutrition-grade-mini grade-${product.nutritionGrade}">
+                        ${product.nutritionGrade}
+                    </div>
+                    <div class="product-name-mini">${product.productName}</div>
+                    <div class="product-brand-mini">${product.brand || 'N/A'}</div>
+                    <div class="product-price-mini">₹${product.price ? product.price.toFixed(2) : 'N/A'}</div>
+                    ${nutritionInfo}
+                    <button class="view-detail-btn" onclick="event.stopPropagation(); navigateToProduct(${product.productId})">
+                        View Details
+                    </button>
+                </div>
+            `;
+        }
+        
+        function navigateToProduct(productId) {
+            window.location.href = `product-detail.cfm?id=${productId}`;
+        }
+        
+        function getTargetGrade(currentGrade) {
+            switch(currentGrade) {
+                case 'E': return 'D';
+                case 'D': return 'C';
+                case 'C': return 'B';
+                case 'B': return 'A';
+                default: return 'A';
+            }
+        }
+        
+        function showNoBetterProductsMessage(targetGrade) {
+            const container = document.getElementById('betterProductsContainer');
+            const grid = document.getElementById('betterProductsGrid');
+            const title = container.querySelector('.section-title');
+            
+            title.innerHTML = `🔥 Better Products in This Category (Grade ${targetGrade})`;
+            grid.innerHTML = `
+                <div class="no-products-message">
+                    <h4>No Grade ${targetGrade} products available in this category</h4>
+                    <p>This product is already among the better options in its category. Check out the best products below!</p>
+                </div>
+            `;
+            container.style.display = 'block';
         }
     </script>
 </body>

@@ -159,7 +159,7 @@
                     ${product.nutritionGrade !== 'A' ? `
                         <div class="suggestion" style="margin-top: 10px;">
                             <button class="btn btn-warning btn-small" 
-                                    onclick="showSuggestions(${product.productId}, '${product.nutritionGrade}', '${product.categoryName}')">
+                                    onclick="console.log('Button clicked!'); showSuggestions(${product.productId}, '${product.nutritionGrade}', '${product.categoryName}')">
                                 Show Better Products
                             </button>
                         </div>
@@ -169,12 +169,19 @@
         }
         
         function showSuggestions(productId, currentGrade, categoryName) {
+            console.log('showSuggestions called with:', {productId, currentGrade, categoryName});
+            
             fetch(`../api/products.cfm?action=getSuggestions&productId=${productId}&currentGrade=${currentGrade}&categoryName=${encodeURIComponent(categoryName)}`)
-                .then(response => response.json())
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.json();
+                })
                 .then(data => {
-                    if (data.success && data.suggestions.length > 0) {
+                    console.log('API response:', data);
+                    if (data.success && data.suggestions && data.suggestions.length > 0) {
                         displaySuggestionsModal(data.suggestions, data.targetGrade, categoryName, productId);
                     } else {
+                        console.log('No suggestions found, trying best products');
                         // Try to get best products
                         showBestProducts(productId, categoryName);
                     }
@@ -186,17 +193,23 @@
         }
         
         function showBestProducts(productId, categoryName) {
+            console.log('showBestProducts called with:', {productId, categoryName});
+            
             fetch(`../api/products.cfm?action=getBest&productId=${productId}&categoryName=${encodeURIComponent(categoryName)}`)
-                .then(response => response.json())
+                .then(response => {
+                    console.log('Best products response status:', response.status);
+                    return response.json();
+                })
                 .then(data => {
-                    if (data.success && data.products.length > 0) {
+                    console.log('Best products API response:', data);
+                    if (data.success && data.products && data.products.length > 0) {
                         displayBestProductsModal(data.products, categoryName);
                     } else {
                         showMessage('No better alternatives available', 'error');
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.error('Error in showBestProducts:', error);
                 });
         }
         
