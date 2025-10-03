@@ -1,11 +1,11 @@
 <cfcomponent displayname="NutriScoreCalculator" hint="Calculates Nutri-Score grades based on nutritional data">
     
     <cffunction name="calculateGrade" access="public" returntype="struct" hint="Calculate Nutri-Score grade based on nutritional data">
-        <cfargument name="calories" type="numeric" required="true" hint="Calories per 100g">
-        <cfargument name="sugar" type="numeric" required="true" hint="Sugar per 100g">
-        <cfargument name="fat" type="numeric" required="true" hint="Fat per 100g">
-        <cfargument name="fiber" type="numeric" required="true" hint="Fiber per 100g">
-        <cfargument name="protein" type="numeric" required="true" hint="Protein per 100g">
+        <cfargument name="calories" type="numeric" required="true" hint="Calories per 100g" />
+        <cfargument name="sugar" type="numeric" required="true" hint="Sugar per 100g" />
+        <cfargument name="fat" type="numeric" required="true" hint="Fat per 100g" />
+        <cfargument name="fiber" type="numeric" required="true" hint="Fiber per 100g" />
+        <cfargument name="protein" type="numeric" required="true" hint="Protein per 100g" />
         
         <cfscript>
             // Initialize points
@@ -160,7 +160,7 @@
     </cffunction>
     
     <cffunction name="calculateGradeFromNutritionData" access="public" returntype="struct" hint="Calculate grade from nutrition data struct">
-        <cfargument name="nutritionData" type="struct" required="true" hint="Struct containing nutrition data">
+        <cfargument name="nutritionData" type="struct" required="true" hint="Struct containing nutrition data" />
         
         <cfscript>
             // Extract values with defaults
@@ -176,7 +176,7 @@
     </cffunction>
     
     <cffunction name="getGradeDescription" access="public" returntype="string" hint="Get description for a grade">
-        <cfargument name="grade" type="string" required="true" hint="Grade letter (A, B, C, D, E)">
+        <cfargument name="grade" type="string" required="true" hint="Grade letter (A, B, C, D, E)" />
         
         <cfscript>
             switch (arguments.grade) {
@@ -197,7 +197,7 @@
     </cffunction>
     
     <cffunction name="getGradeColor" access="public" returntype="string" hint="Get color code for a grade">
-        <cfargument name="grade" type="string" required="true" hint="Grade letter (A, B, C, D, E)">
+        <cfargument name="grade" type="string" required="true" hint="Grade letter (A, B, C, D, E)" />
         
         <cfscript>
             switch (arguments.grade) {
@@ -216,5 +216,5 @@
             }
         </cfscript>
     </cffunction>
-    
+
 </cfcomponent>
