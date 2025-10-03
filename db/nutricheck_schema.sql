@@ -77,20 +77,6 @@ CREATE TABLE IF NOT EXISTS product_ratings (
     INDEX idx_grade (nutrition_grade)
 );
 
--- Sessions table
-CREATE TABLE IF NOT EXISTS sessions (
-    session_id VARCHAR(255) PRIMARY KEY,
-    user_id INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    expires_at TIMESTAMP NOT NULL,
-    ip_address VARCHAR(45),
-    user_agent TEXT,
-    is_active BOOLEAN DEFAULT TRUE,
-    INDEX idx_user_id (user_id),
-    INDEX idx_expires_at (expires_at),
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-);
-
 -- Password reset tokens table
 CREATE TABLE IF NOT EXISTS password_reset_tokens (
     id INT AUTO_INCREMENT PRIMARY KEY,
