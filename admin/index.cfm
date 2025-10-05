@@ -9,6 +9,184 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - NutriCheck</title>
     <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        .admin-dashboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 40px auto;
+            max-width: 1200px;
+            padding: 0 20px;
+        }
+        
+        @media (max-width: 992px) {
+            .admin-dashboard {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+        }
+        
+        .admin-card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .admin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+            border-color: #4CAF50;
+        }
+        
+        .admin-card-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .admin-card h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+        
+        .admin-card p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+        }
+        
+        .admin-card.products {
+            border-top: 4px solid #2196F3;
+        }
+        
+        .admin-card.categories {
+            border-top: 4px solid #FF9800;
+        }
+        
+        .admin-card.users {
+            border-top: 4px solid #4CAF50;
+        }
+        
+        .section-content {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .section-content.active {
+            display: block;
+        }
+        
+        /* Override container to ensure sections stay within bounds */
+        body .container {
+            overflow-x: hidden;
+        }
+        
+        /* Make sections use full container width and stay within container */
+        #productSection,
+        #categorySection,
+        #userSection {
+            width: 100%;
+            max-width: 100%;
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        
+        #productSection .admin-panel,
+        #categorySection .admin-panel,
+        #userSection .admin-panel {
+            width: 100%;
+            max-width: 100%;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            box-sizing: border-box;
+        }
+        
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: #666;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .back-button:hover {
+            background: #555;
+        }
+        
+        #dashboardView {
+            padding: 20px 0;
+        }
+        
+        /* Ensure iframe in user section is properly sized */
+        #userSection iframe {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        
+        /* Ensure category section tables are responsive */
+        #categorySection .admin-panel {
+            overflow-x: auto;
+        }
+        
+        /* Make tables responsive */
+        .table {
+            width: 100%;
+            overflow-x: auto;
+            display: block;
+        }
+        
+        @media (min-width: 768px) {
+            .table {
+                display: table;
+            }
+        }
+        
+        /* Ensure all form groups and elements stay within bounds */
+        .section-content .form-group,
+        .section-content form,
+        .section-content table {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        
+        /* Badge styles for user roles */
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .badge-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .badge-secondary {
+            background: #6c757d;
+            color: white;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -20,20 +198,51 @@
             </div>
         </div>
         
-        
-        <div class="admin-panel">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2>Product Management</h2>
-                <button type="button" id="toggleAddForm" class="btn btn-primary">+ Add New Product</button>
+        <!-- Dashboard View -->
+        <div id="dashboardView">
+            <div style="text-align: center; margin: 30px 0;">
+                <h2 style="color: #333; font-size: 28px;">Welcome to Admin Panel</h2>
+                <p style="color: #666; font-size: 16px;">Select a management section to get started</p>
             </div>
             
-            <div id="addProductSection" style="display: none;">
-                <h3>Add New Product</h3>
-                <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
-                    <span style="color: red;">*</span> Required fields. Other fields are optional and can be filled later.
-                </p>
-                <form id="addProductForm">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="admin-dashboard">
+                <div class="admin-card products" onclick="showSection('products')">
+                    <div class="admin-card-icon">📦</div>
+                    <h2>Product Management</h2>
+                    <p>Add, edit, and manage all products in the database. View nutrition grades and product details.</p>
+                </div>
+                
+                <div class="admin-card categories" onclick="showSection('categories')">
+                    <div class="admin-card-icon">🏷️</div>
+                    <h2>Category Management</h2>
+                    <p>Organize products by creating and managing categories for better classification.</p>
+                </div>
+                
+                <div class="admin-card users" onclick="showSection('users')">
+                    <div class="admin-card-icon">👥</div>
+                    <h2>User Management</h2>
+                    <p>Manage user accounts, roles, and permissions. View user activity and details.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Product Management Section -->
+        <div id="productSection" class="section-content">
+            <button class="back-button" onclick="showDashboard()">← Back to Admin Panel</button>
+            
+            <div class="admin-panel">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>Product Management</h2>
+                    <button type="button" id="toggleAddForm" class="btn btn-primary">+ Add New Product</button>
+                </div>
+                
+                <div id="addProductSection" style="display: none;">
+                    <h3>Add New Product</h3>
+                    <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
+                        <span style="color: red;">*</span> Required fields. Other fields are optional and can be filled later.
+                    </p>
+                    <form id="addProductForm">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div class="form-group">
                         <label for="productName">Product Name: <span style="color: red;">*</span></label>
                         <input type="text" id="productName" name="productName" required>
@@ -111,88 +320,170 @@
                         <label for="cholesterol">Cholesterol (mg):</label>
                         <input type="number" id="cholesterol" name="cholesterol" step="0.01" value="0">
                     </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="description">Description:</label>
-                    <textarea id="description" name="description" rows="3"></textarea>
-                </div>
-                
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea id="description" name="description" rows="3"></textarea>
+                    </div>
+                    
                     <button type="submit" class="btn">Add Product</button>
                     <button type="button" class="btn btn-secondary" onclick="cancelAdd()">Cancel</button>
-                </form>
+                    </form>
+                </div>
+                
+                <div id="message" style="margin-top: 20px;"></div>
             </div>
             
-            <div id="message" style="margin-top: 20px;"></div>
-        </div>
-        
-        <div class="admin-panel" style="margin-top: 30px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2>All Products</h2>
-                <button type="button" id="toggleCategoryManagement" class="btn btn-secondary">Manage Categories</button>
-            </div>
-            
-            <!-- Filter Controls -->
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px; align-items: end;">
-                    <div class="form-group">
-                        <label for="categoryFilter">Filter by Category:</label>
-                        <select id="categoryFilter" style="width: 100%;">
-                            <option value="">All Categories</option>
-                            <!-- Categories will be loaded dynamically -->
-                        </select>
+            <div class="admin-panel" style="margin-top: 30px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>All Products</h2>
+                </div>
+                
+                <!-- Filter Controls -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px; align-items: end;">
+                        <div class="form-group">
+                            <label for="categoryFilter">Filter by Category:</label>
+                            <select id="categoryFilter" style="width: 100%;">
+                                <option value="">All Categories</option>
+                                <!-- Categories will be loaded dynamically -->
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="gradeFilter">Filter by Grade:</label>
+                            <select id="gradeFilter" style="width: 100%;">
+                                <option value="">All Grades</option>
+                                <option value="A">Grade A</option>
+                                <option value="B">Grade B</option>
+                                <option value="C">Grade C</option>
+                                <option value="D">Grade D</option>
+                                <option value="E">Grade E</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <button type="button" id="clearFilters" class="btn btn-secondary">Clear Filters</button>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="gradeFilter">Filter by Grade:</label>
-                        <select id="gradeFilter" style="width: 100%;">
-                            <option value="">All Grades</option>
-                            <option value="A">Grade A</option>
-                            <option value="B">Grade B</option>
-                            <option value="C">Grade C</option>
-                            <option value="D">Grade D</option>
-                            <option value="E">Grade E</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <button type="button" id="clearFilters" class="btn btn-secondary">Clear Filters</button>
+                    <div style="margin-top: 10px; font-size: 14px; color: #666;">
+                        <span id="filterResults">Showing all products</span>
                     </div>
                 </div>
                 
-                <div style="margin-top: 10px; font-size: 14px; color: #666;">
-                    <span id="filterResults">Showing all products</span>
-                </div>
+                <div id="productsTable"></div>
             </div>
-            
-            <div id="productsTable"></div>
         </div>
         
-        <div class="admin-panel" style="margin-top: 30px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2>Category Management</h2>
-                <button type="button" id="toggleAddCategoryForm" class="btn btn-primary">+ Add New Category</button>
+        <!-- Category Management Section -->
+        <div id="categorySection" class="section-content">
+            <button class="back-button" onclick="showDashboard()">← Back to Admin Panel</button>
+            
+            <div class="admin-panel">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>Category Management</h2>
+                    <button type="button" id="toggleAddCategoryForm2" class="btn btn-primary">+ Add New Category</button>
+                </div>
+                
+                <div id="addCategorySection2" style="display: none;">
+                    <h3>Add New Category</h3>
+                    <form id="addCategoryForm2">
+                        <div class="form-group">
+                            <label for="categoryName2">Category Name:</label>
+                            <input type="text" id="categoryName2" name="categoryName" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="categoryDescription2">Description:</label>
+                            <textarea id="categoryDescription2" name="description" rows="3"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn">Add Category</button>
+                        <button type="button" class="btn btn-secondary" onclick="cancelAddCategory2()">Cancel</button>
+                    </form>
+                </div>
+                
+                <div id="message2" style="margin-top: 20px;"></div>
             </div>
             
-            <div id="addCategorySection" style="display: none;">
-                <h3>Add New Category</h3>
-                <form id="addCategoryForm">
-                    <div class="form-group">
-                        <label for="categoryName">Category Name:</label>
-                        <input type="text" id="categoryName" name="categoryName" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="categoryDescription">Description:</label>
-                        <textarea id="categoryDescription" name="description" rows="3"></textarea>
-                    </div>
-                    
-                    <button type="submit" class="btn">Add Category</button>
-                    <button type="button" class="btn btn-secondary" onclick="cancelAddCategory()">Cancel</button>
-                </form>
+            <div class="admin-panel" style="margin-top: 30px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>All Categories</h2>
+                </div>
+                
+                <div id="categoriesTable2"></div>
+            </div>
+        </div>
+        
+        <!-- User Management Section -->
+        <div id="userSection" class="section-content">
+            <button class="back-button" onclick="showDashboard()">← Back to Admin Panel</button>
+            
+            <div class="admin-panel">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>User Management</h2>
+                    <button type="button" id="toggleAddUserForm" class="btn btn-primary">+ Add New User</button>
+                </div>
+                
+                <div id="addUserSection" style="display: none;">
+                    <h3>Add New User</h3>
+                    <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
+                        <span style="color: red;">*</span> All fields are required.
+                    </p>
+                    <form id="addUserForm">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group">
+                                <label for="username">Username: <span style="color: red;">*</span></label>
+                                <input type="text" id="username" name="username" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="userEmail">Email: <span style="color: red;">*</span></label>
+                                <input type="email" id="userEmail" name="email" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="firstName">First Name: <span style="color: red;">*</span></label>
+                                <input type="text" id="firstName" name="firstName" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="lastName">Last Name: <span style="color: red;">*</span></label>
+                                <input type="text" id="lastName" name="lastName" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="userPassword">Password: <span style="color: red;">*</span></label>
+                                <input type="password" id="userPassword" name="password" required>
+                                <small style="color: #666;">Leave blank when editing to keep current password</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="userRole">Role: <span style="color: red;">*</span></label>
+                                <select id="userRole" name="role" required>
+                                    <option value="user">User</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn">Add User</button>
+                        <button type="button" class="btn btn-secondary" onclick="cancelAddUser()">Cancel</button>
+                    </form>
+                </div>
+                
+                <div id="message3" style="margin-top: 20px;"></div>
             </div>
             
-            <div id="categoriesTable"></div>
+            <div class="admin-panel" style="margin-top: 30px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>All Users</h2>
+                </div>
+                
+                <div id="usersTable"></div>
+            </div>
         </div>
     </div>
     
@@ -201,11 +492,57 @@
         let allProducts = [];
         let filteredProducts = [];
         
+        // Navigation functions
+        function showSection(section) {
+            // Save current section to localStorage
+            localStorage.setItem('adminCurrentSection', section);
+            
+            // Hide dashboard
+            document.getElementById('dashboardView').style.display = 'none';
+            
+            // Hide all sections
+            document.getElementById('productSection').classList.remove('active');
+            document.getElementById('categorySection').classList.remove('active');
+            document.getElementById('userSection').classList.remove('active');
+            
+            // Show selected section
+            if (section === 'products') {
+                document.getElementById('productSection').classList.add('active');
+            } else if (section === 'categories') {
+                document.getElementById('categorySection').classList.add('active');
+                loadCategoriesTable2();
+            } else if (section === 'users') {
+                document.getElementById('userSection').classList.add('active');
+                loadAllUsers();
+            }
+        }
+        
+        function showDashboard() {
+            // Clear saved section
+            localStorage.removeItem('adminCurrentSection');
+            
+            // Hide all sections
+            document.getElementById('productSection').classList.remove('active');
+            document.getElementById('categorySection').classList.remove('active');
+            document.getElementById('userSection').classList.remove('active');
+            
+            // Show dashboard
+            document.getElementById('dashboardView').style.display = 'block';
+        }
+        
         window.addEventListener('DOMContentLoaded', () => {
-            console.log('Admin panel loaded - version with category management');
+            console.log('Admin panel loaded - dashboard version');
+            
+            // Check if there's a saved section and restore it
+            const savedSection = localStorage.getItem('adminCurrentSection');
+            if (savedSection) {
+                showSection(savedSection);
+            } else {
+                showDashboard();
+            }
+            
             loadCategories();
             loadAllProducts();
-            loadCategoriesTable();
             setupSearchAndFilters();
             
             // Toggle add form visibility
@@ -229,73 +566,6 @@
                     this.className = 'btn btn-primary';
                     document.getElementById('addProductForm').reset();
                 }
-            });
-            
-            // Toggle add category form visibility
-            document.getElementById('toggleAddCategoryForm').addEventListener('click', function() {
-                const addSection = document.getElementById('addCategorySection');
-                if (addSection.style.display === 'none') {
-                    addSection.style.display = 'block';
-                    this.textContent = 'Cancel Add';
-                    this.className = 'btn btn-secondary';
-                    
-                    // Scroll to the add category form smoothly
-                    setTimeout(() => {
-                        addSection.scrollIntoView({ 
-                            behavior: 'smooth', 
-                            block: 'start' 
-                        });
-                    }, 100);
-                } else {
-                    addSection.style.display = 'none';
-                    this.textContent = '+ Add New Category';
-                    this.className = 'btn btn-primary';
-                    document.getElementById('addCategoryForm').reset();
-                }
-            });
-            
-            // Toggle category management visibility
-            document.getElementById('toggleCategoryManagement').addEventListener('click', function() {
-                const categoryPanel = document.querySelector('.admin-panel:last-child');
-                if (categoryPanel.style.display === 'none') {
-                    categoryPanel.style.display = 'block';
-                    this.textContent = 'Hide Categories';
-                    
-                    // Scroll to the category section smoothly
-                    setTimeout(() => {
-                        categoryPanel.scrollIntoView({ 
-                            behavior: 'smooth', 
-                            block: 'start' 
-                        });
-                    }, 100);
-                } else {
-                    categoryPanel.style.display = 'none';
-                    this.textContent = 'Manage Categories';
-                }
-            });
-            
-            // Show category management section by default
-            const categoryPanel = document.querySelector('.admin-panel:last-child');
-            console.log('Category panel found:', categoryPanel);
-            if (categoryPanel) {
-                categoryPanel.style.display = 'block';
-                document.getElementById('toggleCategoryManagement').textContent = 'Hide Categories';
-                console.log('Category management section made visible');
-            } else {
-                console.error('Category panel not found!');
-            }
-            
-            // Check if all required elements exist
-            const requiredElements = [
-                'categoriesTable',
-                'toggleCategoryManagement',
-                'toggleAddCategoryForm',
-                'addCategorySection'
-            ];
-            
-            requiredElements.forEach(elementId => {
-                const element = document.getElementById(elementId);
-                console.log(`Element ${elementId}:`, element ? 'Found' : 'NOT FOUND');
             });
         });
         
@@ -372,45 +642,119 @@
             });
         });
         
-        // Category form submission
-        document.getElementById('addCategoryForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const categoryId = this.getAttribute('data-category-id');
-            const isEdit = categoryId !== null;
-            
-            // Add category ID to form data for updates
-            if (isEdit) {
-                formData.append('categoryId', categoryId);
+        // Event listeners for standalone category section
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle add category form 2 visibility
+            const toggleBtn = document.getElementById('toggleAddCategoryForm2');
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function() {
+                    const addSection = document.getElementById('addCategorySection2');
+                    if (addSection.style.display === 'none') {
+                        addSection.style.display = 'block';
+                        this.textContent = 'Cancel Add';
+                        this.className = 'btn btn-secondary';
+                    } else {
+                        addSection.style.display = 'none';
+                        this.textContent = '+ Add New Category';
+                        this.className = 'btn btn-primary';
+                        document.getElementById('addCategoryForm2').reset();
+                    }
+                });
             }
             
-            const action = isEdit ? 'updateCategory' : 'addCategory';
+            // Category form 2 submission
+            const categoryForm2 = document.getElementById('addCategoryForm2');
+            if (categoryForm2) {
+                categoryForm2.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(this);
+                    const categoryId = this.getAttribute('data-category-id');
+                    const isEdit = categoryId !== null;
+                    
+                    if (isEdit) {
+                        formData.append('categoryId', categoryId);
+                    }
+                    
+                    const action = isEdit ? 'updateCategory' : 'addCategory';
+                    
+                    fetch(`products.cfm?action=${action}`, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showMessage(data.message, 'success', 'message2');
+                            this.reset();
+                            loadCategoriesTable2();
+                            document.getElementById('addCategorySection2').style.display = 'none';
+                            document.getElementById('toggleAddCategoryForm2').textContent = '+ Add New Category';
+                            document.getElementById('toggleAddCategoryForm2').className = 'btn btn-primary';
+                            this.removeAttribute('data-category-id');
+                        } else {
+                            showMessage(data.message, 'error', 'message2');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showMessage('An error occurred', 'error', 'message2');
+                    });
+                });
+            }
             
-            fetch(`products.cfm?action=${action}`, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showMessage(data.message, 'success');
-                    this.reset();
-                    loadCategories();
-                    loadCategoriesTable();
-                    // Hide the form after successful submission
-                    document.getElementById('addCategorySection').style.display = 'none';
-                    document.getElementById('toggleAddCategoryForm').textContent = '+ Add New Category';
-                    document.getElementById('toggleAddCategoryForm').className = 'btn btn-primary';
-                    this.removeAttribute('data-category-id');
-                } else {
-                    showMessage(data.message, 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showMessage('An error occurred', 'error');
-            });
+            // User form event listeners
+            const toggleUserBtn = document.getElementById('toggleAddUserForm');
+            if (toggleUserBtn) {
+                toggleUserBtn.addEventListener('click', function() {
+                    const addSection = document.getElementById('addUserSection');
+                    if (addSection.style.display === 'none') {
+                        addSection.style.display = 'block';
+                        this.textContent = 'Cancel Add';
+                        this.className = 'btn btn-secondary';
+                    } else {
+                        cancelAddUser();
+                    }
+                });
+            }
+            
+            // User form submission
+            const userForm = document.getElementById('addUserForm');
+            if (userForm) {
+                userForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(this);
+                    const userId = this.getAttribute('data-user-id');
+                    const isEdit = userId !== null;
+                    
+                    if (isEdit) {
+                        formData.append('userId', userId);
+                    }
+                    
+                    const action = isEdit ? 'update' : 'add';
+                    
+                    fetch(`../api/users.cfm?action=${action}`, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showMessage(data.message, 'success', 'message3');
+                            this.reset();
+                            loadAllUsers();
+                            cancelAddUser();
+                        } else {
+                            showMessage(data.message, 'error', 'message3');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showMessage('An error occurred', 'error', 'message3');
+                    });
+                });
+            }
         });
         
         function loadCategories() {
@@ -446,48 +790,36 @@
             }
         }
         
-        function loadCategoriesTable() {
-            console.log('Loading categories table...');
+        // Functions for standalone category section
+        function loadCategoriesTable2() {
+            console.log('Loading categories table 2...');
             const url = 'products.cfm?action=categories&t=' + Date.now();
-            console.log('Fetching from URL:', url);
             
             fetch(url)
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    console.log('Response headers:', response.headers);
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
-                    console.log('Categories table data:', data);
                     if (data.success) {
-                        console.log('Categories loaded successfully:', data.categories);
-                        displayCategoriesTable(data.categories);
+                        displayCategoriesTable2(data.categories);
                     } else {
-                        console.error('Failed to load categories:', data.message);
-                        // Show error message in UI
-                        const categoriesTableDiv = document.getElementById('categoriesTable');
+                        const categoriesTableDiv = document.getElementById('categoriesTable2');
                         if (categoriesTableDiv) {
                             categoriesTableDiv.innerHTML = '<p style="color: red;">Error loading categories: ' + data.message + '</p>';
                         }
                     }
                 })
                 .catch(error => {
-                    console.error('Error loading categories table:', error);
-                    // Show error message in UI
-                    const categoriesTableDiv = document.getElementById('categoriesTable');
+                    console.error('Error loading categories table 2:', error);
+                    const categoriesTableDiv = document.getElementById('categoriesTable2');
                     if (categoriesTableDiv) {
                         categoriesTableDiv.innerHTML = '<p style="color: red;">Error loading categories: ' + error.message + '</p>';
                     }
                 });
         }
         
-        function displayCategoriesTable(categories) {
-            console.log('Displaying categories table with', categories.length, 'categories');
-            
+        function displayCategoriesTable2(categories) {
             const table = document.createElement('table');
             table.className = 'table';
             
-            // Create header
             const thead = document.createElement('thead');
             const headerRow = document.createElement('tr');
             ['ID', 'Category Name', 'Description', 'Actions'].forEach(headerText => {
@@ -498,40 +830,35 @@
             thead.appendChild(headerRow);
             table.appendChild(thead);
             
-            // Create body
             const tbody = document.createElement('tbody');
             categories.forEach(category => {
                 const row = document.createElement('tr');
                 
-                // ID
                 const idCell = document.createElement('td');
                 idCell.textContent = category.categoryId;
                 row.appendChild(idCell);
                 
-                // Category Name
                 const nameCell = document.createElement('td');
                 nameCell.textContent = category.categoryName;
                 row.appendChild(nameCell);
                 
-                // Description
                 const descCell = document.createElement('td');
                 descCell.textContent = category.description || 'N/A';
                 row.appendChild(descCell);
                 
-                // Actions
                 const actionsCell = document.createElement('td');
                 
                 const editBtn = document.createElement('button');
                 editBtn.className = 'btn btn-primary btn-small';
                 editBtn.textContent = 'Edit';
                 editBtn.style.marginRight = '5px';
-                editBtn.onclick = () => editCategory(category.categoryId, category.categoryName, category.description || '');
+                editBtn.onclick = () => editCategory2(category.categoryId, category.categoryName, category.description || '');
                 actionsCell.appendChild(editBtn);
                 
                 const deleteBtn = document.createElement('button');
                 deleteBtn.className = 'btn btn-danger btn-small';
                 deleteBtn.textContent = 'Delete';
-                deleteBtn.onclick = () => deleteCategory(category.categoryId);
+                deleteBtn.onclick = () => deleteCategory2(category.categoryId);
                 actionsCell.appendChild(deleteBtn);
                 
                 row.appendChild(actionsCell);
@@ -540,74 +867,39 @@
             
             table.appendChild(tbody);
             
-            const categoriesTableDiv = document.getElementById('categoriesTable');
+            const categoriesTableDiv = document.getElementById('categoriesTable2');
             if (categoriesTableDiv) {
                 categoriesTableDiv.innerHTML = '';
                 categoriesTableDiv.appendChild(table);
-                console.log('Categories table rendered successfully');
-            } else {
-                console.error('categoriesTable element not found!');
             }
         }
         
-        function editCategory(categoryId, categoryName, description) {
-            // Hide add form if open
-            document.getElementById('addCategorySection').style.display = 'none';
-            document.getElementById('toggleAddCategoryForm').textContent = '+ Add New Category';
-            document.getElementById('toggleAddCategoryForm').className = 'btn btn-primary';
-            
-            // Populate the form with category data
-            document.getElementById('categoryName').value = categoryName;
-            document.getElementById('categoryDescription').value = description;
-            
-            // Store the category ID for update
-            document.getElementById('addCategoryForm').setAttribute('data-category-id', categoryId);
-            
-            // Show the form
-            showEditCategoryForm();
-            
-            // Scroll to the category edit form smoothly
-            setTimeout(() => {
-                const addCategorySection = document.getElementById('addCategorySection');
-                if (addCategorySection) {
-                    addCategorySection.scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'start' 
-                    });
-                }
-            }, 100);
+        function editCategory2(categoryId, categoryName, description) {
+            document.getElementById('categoryName2').value = categoryName;
+            document.getElementById('categoryDescription2').value = description;
+            document.getElementById('addCategoryForm2').setAttribute('data-category-id', categoryId);
+            showEditCategoryForm2();
         }
         
-        function showEditCategoryForm() {
-            const addSection = document.getElementById('addCategorySection');
+        function showEditCategoryForm2() {
+            const addSection = document.getElementById('addCategorySection2');
             const formTitle = addSection.querySelector('h3');
             const submitBtn = addSection.querySelector('button[type="submit"]');
-            const cancelBtn = addSection.querySelector('button[type="button"]');
             
             formTitle.textContent = 'Edit Category';
             submitBtn.textContent = 'Update Category';
-            cancelBtn.textContent = 'Cancel Edit';
-            cancelBtn.setAttribute('onclick', 'cancelEditCategory()');
-            
             addSection.style.display = 'block';
         }
         
-        function cancelAddCategory() {
-            document.getElementById('addCategorySection').style.display = 'none';
-            document.getElementById('toggleAddCategoryForm').textContent = '+ Add New Category';
-            document.getElementById('toggleAddCategoryForm').className = 'btn btn-primary';
-            document.getElementById('addCategoryForm').reset();
+        function cancelAddCategory2() {
+            document.getElementById('addCategorySection2').style.display = 'none';
+            document.getElementById('toggleAddCategoryForm2').textContent = '+ Add New Category';
+            document.getElementById('toggleAddCategoryForm2').className = 'btn btn-primary';
+            document.getElementById('addCategoryForm2').reset();
+            document.getElementById('addCategoryForm2').removeAttribute('data-category-id');
         }
         
-        function cancelEditCategory() {
-            document.getElementById('addCategorySection').style.display = 'none';
-            document.getElementById('toggleAddCategoryForm').textContent = '+ Add New Category';
-            document.getElementById('toggleAddCategoryForm').className = 'btn btn-primary';
-            document.getElementById('addCategoryForm').reset();
-            document.getElementById('addCategoryForm').removeAttribute('data-category-id');
-        }
-        
-        function deleteCategory(categoryId) {
+        function deleteCategory2(categoryId) {
             if (!confirm('Are you sure you want to delete this category?')) {
                 return;
             }
@@ -616,16 +908,146 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        showMessage(data.message, 'success');
-                        loadCategories();
-                        loadCategoriesTable();
+                        showMessage(data.message, 'success', 'message2');
+                        loadCategoriesTable2();
                     } else {
-                        showMessage(data.message, 'error');
+                        showMessage(data.message, 'error', 'message2');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showMessage('An error occurred', 'error');
+                    showMessage('An error occurred', 'error', 'message2');
+                });
+        }
+        
+        // User Management Functions
+        function loadAllUsers() {
+            console.log('Loading users...');
+            fetch('../api/users.cfm?action=list')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayUsersTable(data.users);
+                    } else {
+                        showMessage(data.message, 'error', 'message3');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading users:', error);
+                    showMessage('Error loading users', 'error', 'message3');
+                });
+        }
+        
+        function displayUsersTable(users) {
+            if (!users || users.length === 0) {
+                document.getElementById('usersTable').innerHTML = 
+                    '<div class="alert" style="background: #fff3cd; border-left: 4px solid #ffc107; color: #856404;">No users found.</div>';
+                return;
+            }
+            
+            const tableHtml = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${users.map(u => `
+                            <tr>
+                                <td>${u.userId}</td>
+                                <td>${u.username}</td>
+                                <td>${u.email}</td>
+                                <td>${u.firstName}</td>
+                                <td>${u.lastName}</td>
+                                <td><span class="badge badge-${u.role === 'admin' ? 'primary' : 'secondary'}">${u.role}</span></td>
+                                <td>
+                                    <button class="btn btn-primary btn-small" 
+                                            onclick="editUser(${u.userId})" style="margin-right: 5px;">Edit</button>
+                                    <button class="btn btn-danger btn-small" 
+                                            onclick="deleteUser(${u.userId})">Delete</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            
+            document.getElementById('usersTable').innerHTML = tableHtml;
+        }
+        
+        function editUser(userId) {
+            fetch(`../api/users.cfm?action=get&userId=${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showEditUserForm();
+                        populateEditUserForm(data.user);
+                    } else {
+                        showMessage(data.message, 'error', 'message3');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showMessage('An error occurred', 'error', 'message3');
+                });
+        }
+        
+        function populateEditUserForm(user) {
+            document.getElementById('addUserForm').setAttribute('data-user-id', user.userId);
+            document.getElementById('username').value = user.username || '';
+            document.getElementById('userEmail').value = user.email || '';
+            document.getElementById('firstName').value = user.firstName || '';
+            document.getElementById('lastName').value = user.lastName || '';
+            document.getElementById('userPassword').value = '';
+            document.getElementById('userRole').value = user.role || 'user';
+        }
+        
+        function showEditUserForm() {
+            const addSection = document.getElementById('addUserSection');
+            const formTitle = addSection.querySelector('h3');
+            const submitBtn = addSection.querySelector('button[type="submit"]');
+            const passwordField = document.getElementById('userPassword');
+            
+            formTitle.textContent = 'Edit User';
+            submitBtn.textContent = 'Update User';
+            passwordField.removeAttribute('required');
+            addSection.style.display = 'block';
+        }
+        
+        function cancelAddUser() {
+            document.getElementById('addUserSection').style.display = 'none';
+            document.getElementById('toggleAddUserForm').textContent = '+ Add New User';
+            document.getElementById('toggleAddUserForm').className = 'btn btn-primary';
+            document.getElementById('addUserForm').reset();
+            document.getElementById('addUserForm').removeAttribute('data-user-id');
+            document.getElementById('userPassword').setAttribute('required', 'required');
+        }
+        
+        function deleteUser(userId) {
+            if (!confirm('Are you sure you want to delete this user?')) {
+                return;
+            }
+            
+            fetch(`../api/users.cfm?action=delete&userId=${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showMessage(data.message, 'success', 'message3');
+                        loadAllUsers();
+                    } else {
+                        showMessage(data.message, 'error', 'message3');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showMessage('An error occurred', 'error', 'message3');
                 });
         }
         
@@ -972,12 +1394,14 @@
                 });
         }
         
-        function showMessage(message, type) {
-            const messageDiv = document.getElementById('message');
-            messageDiv.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-            setTimeout(() => {
-                messageDiv.innerHTML = '';
-            }, 3000);
+        function showMessage(message, type, targetDiv = 'message') {
+            const messageDiv = document.getElementById(targetDiv);
+            if (messageDiv) {
+                messageDiv.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+                setTimeout(() => {
+                    messageDiv.innerHTML = '';
+                }, 3000);
+            }
         }
         
         function setupSearchAndFilters() {
