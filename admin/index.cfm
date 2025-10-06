@@ -533,6 +533,9 @@
         window.addEventListener('DOMContentLoaded', () => {
             console.log('Admin panel loaded - dashboard version');
             
+            // Ensure form is in "Add" mode on page load
+            resetFormTitle();
+            
             // Check if there's a saved section and restore it
             const savedSection = localStorage.getItem('adminCurrentSection');
             if (savedSection) {
@@ -549,6 +552,11 @@
             document.getElementById('toggleAddForm').addEventListener('click', function() {
                 const addSection = document.getElementById('addProductSection');
                 if (addSection.style.display === 'none') {
+                    // Reset form to "Add" mode
+                    document.getElementById('addProductForm').reset();
+                    document.getElementById('addProductForm').removeAttribute('data-product-id');
+                    resetFormTitle();
+                    
                     addSection.style.display = 'block';
                     this.textContent = 'Cancel Add';
                     this.className = 'btn btn-secondary';
@@ -565,6 +573,8 @@
                     this.textContent = '+ Add New Product';
                     this.className = 'btn btn-primary';
                     document.getElementById('addProductForm').reset();
+                    document.getElementById('addProductForm').removeAttribute('data-product-id');
+                    resetFormTitle();
                 }
             });
         });
@@ -1366,9 +1376,14 @@
             const addSection = document.getElementById('addProductSection');
             const formTitle = addSection.querySelector('h3');
             const formNote = addSection.querySelector('p');
+            const submitBtn = addSection.querySelector('button[type="submit"]');
+            const cancelBtn = addSection.querySelector('button[type="button"]');
             
             formTitle.textContent = 'Add New Product';
             formNote.innerHTML = '<span style="color: red;">*</span> Required fields. Other fields are optional and can be filled later.';
+            submitBtn.textContent = 'Add Product';
+            cancelBtn.textContent = 'Cancel';
+            cancelBtn.setAttribute('onclick', 'cancelAdd()');
         }
         
         function deleteProduct(productId) {
