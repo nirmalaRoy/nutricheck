@@ -2,7 +2,7 @@
 <cfcontent type="application/json">
 
 <!--- Initialize NutriScore Calculator Component --->
-<cfset nutriScoreCalculator = createObject("component", "components.NutriScoreCalculator")>
+<cfset nutriScoreCalculator = createObject("component", "nutricheck.components.NutriScoreCalculator")>
 
 <cfparam name="url.action" default="">
 <cfparam name="url.productId" default="0">
