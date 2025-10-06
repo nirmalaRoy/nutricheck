@@ -20,11 +20,16 @@
     
     <cffunction name="onRequestStart" returnType="boolean" output="false">
         <cfargument name="targetPage" type="string" required="true">
-        <cfif not session.user.loggedIn and 
-              not listFindNoCase("login.cfm,register.cfm,dashboard.cfm,product-detail.cfm,api,test_calculator.cfm,grade_calculator_demo.cfm,calculate_grade.cfm,simple-product-test.cfm", listLast(arguments.targetPage, "/")) and
-              not findNoCase("/api/", arguments.targetPage)>
-            <cflocation url="login.cfm" addtoken="false">
+        
+        <!--- Define public pages that don't require authentication --->
+        <cfset var publicPages = "login.cfm,register.cfm,reset-password.cfm">
+        <cfset var currentPage = listLast(arguments.targetPage, "/")>
+        
+        <!--- Redirect to login if not logged in and not on a public page --->
+        <cfif not session.user.loggedIn and not listFindNoCase(publicPages, currentPage)>
+            <cflocation url="/nutricheck/auth/login.cfm" addtoken="false">
         </cfif>
+        
         <cfreturn true>
     </cffunction>
 </cfcomponent>
