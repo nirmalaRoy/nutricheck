@@ -1,74 +1,8 @@
 <cfsetting enablecfoutputonly="true">
 <cfcontent type="application/json">
 
-<!--- Helper function to calculate nutrition score --->
-<cffunction name="calculateNutritionScore" returnType="numeric" access="private">
-    <cfargument name="calories" type="numeric" required="true">
-    <cfargument name="protein" type="numeric" required="true">
-    <cfargument name="fiber" type="numeric" required="true">
-    <cfargument name="sugar" type="numeric" required="true">
-    <cfargument name="sodium" type="numeric" required="true">
-    <cfargument name="saturatedFat" type="numeric" required="true">
-    
-    <cfset var score = 100>
-    
-    <!--- Deduct points for high calories (over 300 per 100g) --->
-    <cfif arguments.calories gt 300>
-        <cfset score = score - ((arguments.calories - 300) / 10)>
-    </cfif>
-    
-    <!--- Deduct points for high sugar (over 5g per 100g) --->
-    <cfif arguments.sugar gt 5>
-        <cfset score = score - ((arguments.sugar - 5) * 2)>
-    </cfif>
-    
-    <!--- Deduct points for high sodium (over 200mg per 100g) --->
-    <cfif arguments.sodium gt 200>
-        <cfset score = score - ((arguments.sodium - 200) / 20)>
-    </cfif>
-    
-    <!--- Deduct points for high saturated fat (over 2g per 100g) --->
-    <cfif arguments.saturatedFat gt 2>
-        <cfset score = score - ((arguments.saturatedFat - 2) * 3)>
-    </cfif>
-    
-    <!--- Add points for high protein (over 5g per 100g) --->
-    <cfif arguments.protein gt 5>
-        <cfset score = score + ((arguments.protein - 5) * 2)>
-    </cfif>
-    
-    <!--- Add points for high fiber (over 3g per 100g) --->
-    <cfif arguments.fiber gt 3>
-        <cfset score = score + ((arguments.fiber - 3) * 3)>
-    </cfif>
-    
-    <!--- Ensure score is between 0 and 100 --->
-    <cfif score lt 0>
-        <cfset score = 0>
-    </cfif>
-    <cfif score gt 100>
-        <cfset score = 100>
-    </cfif>
-    
-    <cfreturn score>
-</cffunction>
-
-<!--- Helper function to determine nutrition grade --->
-<cffunction name="getNutritionGrade" returnType="string" access="private">
-    <cfargument name="score" type="numeric" required="true">
-    
-    <cfif arguments.score gte 80>
-        <cfreturn "A">
-    <cfelseif arguments.score gte 60>
-        <cfreturn "B">
-    <cfelseif arguments.score gte 40>
-        <cfreturn "C">
-    <cfelseif arguments.score gte 20>
-        <cfreturn "D">
-    <cfelse>
-        <cfreturn "E">
-    </cfif>
-</cffunction>
+<!--- Initialize NutriScore Calculator Component --->
+<cfset nutriScoreCalculator = createObject("component", "components.NutriScoreCalculator")>
 
 <cfparam name="url.action" default="">
 <cfparam name="url.productId" default="0">
@@ -134,17 +68,17 @@
             )
         </cfquery>
         
-        <!--- Calculate nutrition score and grade --->
-        <cfset nutritionScore = calculateNutritionScore(
+        <!--- Calculate nutrition score and grade using NutriScore Calculator --->
+        <cfset gradeResult = nutriScoreCalculator.calculateGrade(
             val(form.calories),
-            val(form.protein),
-            val(form.fiber),
             val(form.sugar),
-            val(form.sodium),
-            val(form.saturatedFat)
+            val(form.saturatedFat),
+            val(form.fiber),
+            val(form.protein)
         )>
         
-        <cfset nutritionGrade = getNutritionGrade(nutritionScore)>
+        <cfset nutritionGrade = gradeResult.grade>
+        <cfset nutritionScore = gradeResult.nutritionalScore>
         
         <!--- Insert nutrition rating --->
         <cfquery name="insertRating" datasource="nutricheck">
@@ -364,18 +298,18 @@
             </cfquery>
         </cfif>
         
-        <!--- Recalculate nutrition score and grade --->
+        <!--- Recalculate nutrition score and grade using NutriScore Calculator --->
         <cftry>
-            <cfset nutritionScore = calculateNutritionScore(
+            <cfset gradeResult = nutriScoreCalculator.calculateGrade(
                 form.calories,
-                form.protein,
-                form.fiber,
                 form.sugar,
-                form.sodium,
-                form.saturatedFat
+                form.fat,
+                form.fiber,
+                form.protein
             )>
             
-            <cfset nutritionGrade = getNutritionGrade(nutritionScore)>
+            <cfset nutritionGrade = gradeResult.grade>
+            <cfset nutritionScore = gradeResult.nutritionalScore>
         <cfcatch type="any">
             <cflog file="product_update" text="Error calculating nutrition score: #cfcatch.type# - #cfcatch.detail#">
             <cfset nutritionScore = 0>
