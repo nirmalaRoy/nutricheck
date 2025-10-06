@@ -18,23 +18,4 @@
         <cfset session.user.role = "user">
     </cffunction>
     
-    <cffunction name="onRequestStart" returnType="boolean" output="false">
-        <cfargument name="targetPage" type="string" required="true">
-        
-        <!--- Define public pages that don't require authentication --->
-        <cfset var publicPages = "login.cfm,register.cfm,reset-password.cfm">
-        <cfset var currentPage = listLast(arguments.targetPage, "/")>
-        
-        <!--- Allow API endpoints to handle their own authentication --->
-        <cfif findNoCase("/api/", arguments.targetPage)>
-            <cfreturn true>
-        </cfif>
-        
-        <!--- Redirect to login if not logged in and not on a public page --->
-        <cfif not session.user.loggedIn and not listFindNoCase(publicPages, currentPage)>
-            <cflocation url="/nutricheck/auth/login.cfm" addtoken="false">
-        </cfif>
-        
-        <cfreturn true>
-    </cffunction>
 </cfcomponent>
