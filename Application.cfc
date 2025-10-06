@@ -20,12 +20,11 @@
     
     <cffunction name="onRequestStart" returnType="boolean" output="false">
         <cfargument name="targetPage" type="string" required="true">
-        <!--- Temporarily disable all authentication for testing --->
-        <!--- <cfif not session.user.loggedIn and 
+        <cfif not session.user.loggedIn and 
               not listFindNoCase("login.cfm,register.cfm,dashboard.cfm,product-detail.cfm,api,test_calculator.cfm,grade_calculator_demo.cfm,calculate_grade.cfm,simple-product-test.cfm", listLast(arguments.targetPage, "/")) and
               not findNoCase("/api/", arguments.targetPage)>
             <cflocation url="login.cfm" addtoken="false">
-        </cfif> --->
+        </cfif>
         <cfreturn true>
     </cffunction>
 </cfcomponent>
